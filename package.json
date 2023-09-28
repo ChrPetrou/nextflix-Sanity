@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "main": "package.json",
   "license": "UNLICENSED",
+  "type": "module",
   "scripts": {
     "dev": "sanity dev",
     "start": "sanity start",
@@ -16,8 +17,10 @@
   ],
   "dependencies": {
     "@sanity/vision": "^3.16.7",
+    "dotenv": "^16.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.11.0",
     "react-is": "^18.2.0",
     "sanity": "^3.16.7",
     "styled-components": "^5.3.9"
