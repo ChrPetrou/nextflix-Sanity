@@ -14,7 +14,7 @@ const client = createClient({
   apiVersion: 'v2021-10-21',
 })
 
-let proccessMoviesFilePath = process.env.GLOBAL_PATH + '/config/merged.json'
+let proccessMoviesFilePath = process.env.GLOBAL_PATH + '/config/movies.json'
 
 let mergedArray = JSON.parse(fs.readFileSync(proccessMoviesFilePath, 'utf-8'))
 
@@ -32,7 +32,7 @@ const importData = () => {
       }))
 
       //create a new document if not exist or replace it with the new data
-      client.createOrReplace({
+      client.createIfNotExists({
         _type: 'movie',
         _id: element.slug,
         title: element.title,
@@ -157,7 +157,7 @@ const importData = () => {
       })
 
       //a file to write the movies that i created in sanity
-      let finishedMoviesFilePath = process.env.GLOBAL_PATH + '/config/movies.json'
+      let finishedMoviesFilePath = process.env.GLOBAL_PATH + '/config/merged.json'
       let x = fs.readFileSync(finishedMoviesFilePath, 'utf-8')
       let finishedArray = JSON.parse(x)
       finishedArray.push(element)
@@ -174,11 +174,11 @@ const importData = () => {
   }
 }
 
-//interval because of rate limit
+// interval because of rate limit
 if (mergedArray.length > 0) {
   setInterval(() => {
     importData()
-  }, 3000)
+  }, 1000)
 } else {
   console.log('All documents Inserted')
 }
@@ -227,3 +227,41 @@ async function deleteAllDocuments() {
 
 // // Call the function to delete all documents
 // deleteAllDocuments()
+
+let proccessVideosFilePath = process.env.GLOBAL_PATH + '/config/videos.json'
+
+let videoArray = JSON.parse(fs.readFileSync(proccessVideosFilePath, 'utf-8'))
+
+const imporVideos = () => {
+  try {
+    videoArray.slice(0, 1).forEach((element, index) => {
+      //create a new document if not exist or replace it with the new data
+      client.patch(element.slug).set({
+        videoId: element.video,
+      })
+
+      //a file to write the movies that i created in sanity
+      let finishedMoviesFilePath = process.env.GLOBAL_PATH + '/config/videosMerged.json'
+      let x = fs.readFileSync(finishedMoviesFilePath, 'utf-8')
+      let finishedArray = JSON.parse(x)
+      finishedArray.push(element)
+      console.log()
+      fs.writeFileSync(finishedMoviesFilePath, JSON.stringify(finishedArray, null, 6))
+
+      //remove first item of merged array
+      videoArray.splice(0, 1)
+      //then write it the array without that value back to its original file
+      fs.writeFileSync(proccessMoviesFilePath, JSON.stringify(videoArray, null, 6))
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+// if (videoArray.length > 0) {
+//   setInterval(() => {
+//     imporVideos()
+//   }, 3000)
+// } else {
+//   console.log('All documents Inserted')
+// }

@@ -60,6 +60,11 @@ export default defineType({
       type: 'string',
     }),
     defineField({
+      name: 'videoID',
+      title: 'Video ID',
+      type: 'string',
+    }),
+    defineField({
       name: 'genre',
       title: 'Genre',
       type: 'array',
