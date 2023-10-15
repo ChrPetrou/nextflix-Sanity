@@ -234,10 +234,10 @@ let videoArray = JSON.parse(fs.readFileSync(proccessVideosFilePath, 'utf-8'))
 
 const imporVideos = () => {
   try {
-    videoArray.slice(0, 1).forEach((element, index) => {
+    videoArray.forEach((element, index) => {
       //create a new document if not exist or replace it with the new data
       client.patch(element.slug).set({
-        videoId: element.video,
+        videoID: element.youtubeID,
       })
 
       //a file to write the movies that i created in sanity
@@ -251,17 +251,17 @@ const imporVideos = () => {
       //remove first item of merged array
       videoArray.splice(0, 1)
       //then write it the array without that value back to its original file
-      fs.writeFileSync(proccessMoviesFilePath, JSON.stringify(videoArray, null, 6))
+      fs.writeFileSync(proccessVideosFilePath, JSON.stringify(videoArray, null, 6))
     })
   } catch (err) {
     console.log(err)
   }
 }
 
-// if (videoArray.length > 0) {
-//   setInterval(() => {
-//     imporVideos()
-//   }, 3000)
-// } else {
-//   console.log('All documents Inserted')
-// }
+if (videoArray.length > 0) {
+  setInterval(() => {
+    imporVideos()
+  }, 3000)
+} else {
+  console.log('All documents Inserted')
+}
