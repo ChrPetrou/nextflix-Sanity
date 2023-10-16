@@ -239,7 +239,7 @@ const imporVideos = () => {
       const res = client
         .patch(element.slug)
         .set({
-          videoID: element?.video || '',
+          videoID: element?.youtubeID || '',
         })
         .commit()
         .then((response) => {
@@ -254,7 +254,7 @@ const imporVideos = () => {
       let x = fs.readFileSync(finishedMoviesFilePath, 'utf-8')
       let finishedArray = JSON.parse(x)
       finishedArray.push(element)
-      console.log(element)
+      // console.log(element)
       fs.writeFileSync(finishedMoviesFilePath, JSON.stringify(finishedArray, null, 6))
 
       //remove first item of merged array
@@ -266,11 +266,14 @@ const imporVideos = () => {
     console.log(err)
   }
 }
-
+let intervalId
 if (videoArray.length > 0) {
-  setInterval(() => {
+  intervalId = setInterval(() => {
     imporVideos()
-  }, 3000)
+    if (videoArray.length <= 0) {
+      clearInterval(intervalId)
+    }
+  }, 1000)
 } else {
   console.log('All documents Inserted')
 }
