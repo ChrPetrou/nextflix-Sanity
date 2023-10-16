@@ -175,13 +175,13 @@ const importData = () => {
 }
 
 // interval because of rate limit
-if (mergedArray.length > 0) {
-  setInterval(() => {
-    importData()
-  }, 1000)
-} else {
-  console.log('All documents Inserted')
-}
+// if (mergedArray.length > 0) {
+//   setInterval(() => {
+//     importData()
+//   }, 1000)
+// } else {
+//   console.log('All documents Inserted')
+// }
 
 //import rating documents to sanity
 const importRating = () => {
@@ -234,18 +234,27 @@ let videoArray = JSON.parse(fs.readFileSync(proccessVideosFilePath, 'utf-8'))
 
 const imporVideos = () => {
   try {
-    videoArray.forEach((element, index) => {
+    videoArray.slice(0, 1).forEach((element, index) => {
       //create a new document if not exist or replace it with the new data
-      client.patch(element.slug).set({
-        videoID: element.youtubeID,
-      })
+      const res = client
+        .patch(element.slug)
+        .set({
+          videoID: element?.video || '',
+        })
+        .commit()
+        .then((response) => {
+          console.log('Entry patched successfully:', response)
+        })
+        .catch((error) => {
+          console.error('Error patching entry:', error)
+        })
 
       //a file to write the movies that i created in sanity
       let finishedMoviesFilePath = process.env.GLOBAL_PATH + '/config/videosMerged.json'
       let x = fs.readFileSync(finishedMoviesFilePath, 'utf-8')
       let finishedArray = JSON.parse(x)
       finishedArray.push(element)
-      console.log()
+      console.log(element)
       fs.writeFileSync(finishedMoviesFilePath, JSON.stringify(finishedArray, null, 6))
 
       //remove first item of merged array
